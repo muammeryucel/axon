@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.eventsourcing.conflictresolution.ConflictResolver;
+import org.axonframework.eventsourcing.conflictresolution.Conflicts;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
@@ -51,7 +53,8 @@ public class BankAccount {
 	}
 
 	@CommandHandler
-	public void handle(WithdrawCommand command) {
+	public void handle(WithdrawCommand command, ConflictResolver conflictResolver) {
+		conflictResolver.detectConflicts(Conflicts.payloadTypeOf(WithdrawnEvent.class));
 		if (balance.compareTo(command.getAmount()) < 0) {
 			throw new IllegalStateException("Insufficient balance!");
 		}

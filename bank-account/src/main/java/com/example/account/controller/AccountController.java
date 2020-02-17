@@ -56,8 +56,8 @@ public class AccountController {
 
 	@PostMapping("/withdraw/{accountId}")
 	public ResponseEntity<?> withdraw(@PathVariable("accountId") String accountId,
-			@RequestParam("amount") BigDecimal amount) {
-		commandGateway.sendAndWait(new WithdrawCommand(accountId, amount));
+			@RequestParam("version") Long version, @RequestParam("amount") BigDecimal amount) {
+		commandGateway.sendAndWait(new WithdrawCommand(accountId, version, amount));
 		return ResponseEntity.ok().build();
 	}
 

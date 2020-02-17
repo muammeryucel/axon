@@ -18,6 +18,8 @@ public class AccountDetails {
 
 	@Column(name = "ACCOUNT_ID")
 	private String accountId;
+
+	private Long version;
 	
 	private BigDecimal balance = BigDecimal.ZERO;
 
@@ -43,5 +45,13 @@ public class AccountDetails {
 	
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+	
+	public Long getVersion() {
+		return version;
+	}
+	
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 }

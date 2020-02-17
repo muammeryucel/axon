@@ -1,6 +1,7 @@
 package com.example.account.query;
 
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.eventhandling.SequenceNumber;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,23 +18,26 @@ public class AccountProjector {
 	private AccountDetailsRepository repository;
 
 	@EventHandler
-	public void handleAccountCreatedEvent(AccountCreatedEvent event) {
+	public void handleAccountCreatedEvent(AccountCreatedEvent event, @SequenceNumber Long version) {
 		AccountDetails entity = new AccountDetails();
 		entity.setAccountId(event.getAccountId());
+		entity.setVersion(version);
 		repository.save(entity);
 	}
 
 	@EventHandler
-	public void handleDepositedEvent(DepositedEvent event) {
+	public void handleDepositedEvent(DepositedEvent event, @SequenceNumber Long version) {
 		AccountDetails entity = repository.findByAccountId(event.getAccountId());
 		entity.setBalance(entity.getBalance().add(event.getAmount()));
+		entity.setVersion(version);
 		repository.save(entity);
 	}
 
 	@EventHandler
-	public void handleWithdrawnEvent(WithdrawnEvent event) {
+	public void handleWithdrawnEvent(WithdrawnEvent event, @SequenceNumber Long version) {
 		AccountDetails entity = repository.findByAccountId(event.getAccountId());
 		entity.setBalance(entity.getBalance().subtract(event.getAmount()));
+		entity.setVersion(version);
 		repository.save(entity);
 	}
 
