@@ -2,8 +2,6 @@ package com.example.account.api;
 
 import java.math.BigDecimal;
 
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
-
 public class WithdrawnEvent {
 
 	private String accountId;

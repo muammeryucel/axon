@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.eventhandling.gateway.EventGateway;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import com.example.account.api.CreateAccountCommand;
 import com.example.account.api.DepositCommand;
 import com.example.account.api.FindByAccountIdQuery;
 import com.example.account.api.WithdrawCommand;
+import com.example.account.api.WithdrawConfirmedEvent;
 import com.example.account.query.AccountDetails;
 
 @RestController
@@ -25,6 +27,9 @@ public class AccountController {
 
 	@Autowired
 	private CommandGateway commandGateway;
+
+	@Autowired
+	private EventGateway eventGateway;
 
 	@Autowired
 	private QueryGateway queryGateway;
@@ -43,14 +48,22 @@ public class AccountController {
 	}
 
 	@PostMapping("/deposit/{accountId}")
-	public ResponseEntity<?> deposit(@PathVariable("accountId") String accountId, @RequestParam("amount") BigDecimal amount) {
+	public ResponseEntity<?> deposit(@PathVariable("accountId") String accountId,
+			@RequestParam("amount") BigDecimal amount) {
 		commandGateway.sendAndWait(new DepositCommand(accountId, amount));
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/withdraw/{accountId}")
-	public ResponseEntity<?> withdraw(@PathVariable("accountId") String accountId, @RequestParam("amount") BigDecimal amount) {
+	public ResponseEntity<?> withdraw(@PathVariable("accountId") String accountId,
+			@RequestParam("amount") BigDecimal amount) {
 		commandGateway.sendAndWait(new WithdrawCommand(accountId, amount));
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/confirm/{accountId}")
+	public ResponseEntity<?> confirmWithdraw(@PathVariable("accountId") String accountId) {
+		eventGateway.publish(new WithdrawConfirmedEvent(accountId));
 		return ResponseEntity.ok().build();
 	}
 
