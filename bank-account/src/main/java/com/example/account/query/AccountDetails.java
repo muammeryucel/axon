@@ -1,5 +1,7 @@
 package com.example.account.query;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,8 @@ public class AccountDetails {
 
 	@Column(name = "ACCOUNT_ID")
 	private String accountId;
+	
+	private BigDecimal balance = BigDecimal.ZERO;
 
 	public Long getId() {
 		return id;
@@ -31,5 +35,13 @@ public class AccountDetails {
 
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
+	}
+	
+	public BigDecimal getBalance() {
+		return balance;
+	}
+	
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 }
