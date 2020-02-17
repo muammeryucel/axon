@@ -2,6 +2,8 @@ package com.example.account.command;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.eventsourcing.conflictresolution.ConflictResolver;
@@ -17,8 +19,10 @@ import com.example.account.api.DepositedEvent;
 import com.example.account.api.WithdrawCommand;
 import com.example.account.api.WithdrawnEvent;
 
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "defaultSnapshotTriggerDefinition")
 public class BankAccount {
+
+	private static final Log LOGGER = LogFactory.getLog(BankAccount.class);
 
 	@AggregateIdentifier
 	private String accountId;
@@ -50,6 +54,7 @@ public class BankAccount {
 	@EventSourcingHandler
 	public void on(DepositedEvent event) {
 		balance = balance.add(event.getAmount());
+		LOGGER.info("DEPOSITED. BALANCE: " + balance);
 	}
 
 	@CommandHandler
